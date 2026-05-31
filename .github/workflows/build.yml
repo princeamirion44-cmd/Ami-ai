@@ -1,1 +1,24 @@
-
+name: Build APK
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip project
+        run: unzip amirion-android.zip -d project
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Make gradlew executable
+        run: chmod +x project/gradlew
+      - name: Build APK
+        run: cd project && ./gradlew assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AmirionAI-debug
+          path: project/app/build/outputs/apk/debug/*.apk
